@@ -30,7 +30,7 @@ async function connectRabbitMQ(retries = 5, delay = 2000) {
         }
     }
 
-    console.error('Could not connect to RabbitMQ after retries.');
+    console.error('Express could not connect to RabbitMQ after retries.');
 }
 
 connectRabbitMQ();
