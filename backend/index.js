@@ -1,6 +1,7 @@
 const express = require('express');
 const redis = require('redis');
 const amqp = require('amqplib');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.BACKEND_PORT || 3000;
@@ -35,24 +36,21 @@ async function connectRabbitMQ(retries = 5, delay = 2000) {
 
 connectRabbitMQ();
 
-// Middleware
-
-// CORS Handling
 const allowedOrigins = [
-    'http://localhost:5173',
-    // 'https://production-domain.com' # Uncomment for production
+    'http://localhost:5173'
 ];
 
-app.use(require('cors')({
+app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
+      console.log('CORS origin:', origin);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     }
 }));
-
 
 // Routes
 app.get('/', async (req, res) => {
