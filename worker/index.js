@@ -1,5 +1,7 @@
 const amqp = require('amqplib');
 
+require('dotenv').config();
+
 async function connectRabbitMQ(retries = 5, delay = 2000) {
     for(let i = 0; i < retries; i++) {
         try {

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
+const port = process.env.BACKEND_PORT || '3000';
+
 function App() {
   const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
-    fetch('http://localhost:3000/')
+    fetch(`http://localhost:${port}/`)
     .then(res => res.text())
     .then(data => setMessage(data))
     .catch(() => setMessage('Failed to connect to backend'));
