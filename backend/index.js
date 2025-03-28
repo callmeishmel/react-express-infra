@@ -35,6 +35,9 @@ async function connectRabbitMQ(retries = 5, delay = 2000) {
 
 connectRabbitMQ();
 
+// Middleware
+app.use(require('cors')());
+
 // Routes
 app.get('/', async (req, res) => {
     await client.set('ping', 'pong');
