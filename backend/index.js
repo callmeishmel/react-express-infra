@@ -3,6 +3,8 @@ const redis = require('redis');
 const amqp = require('amqplib');
 const cors = require('cors');
 
+require('dotenv').config();
+
 const app = express();
 const port = process.env.BACKEND_PORT || 3000;
 
@@ -36,9 +38,10 @@ async function connectRabbitMQ(retries = 5, delay = 2000) {
 
 connectRabbitMQ();
 
-const allowedOrigins = [
-    'http://localhost:5173'
-];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || 'http://localhost:5173')
+.split(' ')
+.map(origin => origin.trim())
+.filter(Boolean);
 
 app.use(cors({
     origin: (origin, callback) => {
