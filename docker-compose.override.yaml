@@ -1,11 +1,30 @@
 services:
   backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
     command: npm run dev
     volumes:
       - ./backend:/app
       - /app/node_modules
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
   worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
     command: npm run dev
     volumes:
       - ./worker:/app

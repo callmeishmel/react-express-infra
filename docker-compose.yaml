@@ -3,9 +3,6 @@ services:
     build: ./backend
     ports:
       - '${BACKEND_PORT:-3000}:3000'
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
     environment:
       - REDIS_URL=redis://redis:6379
       - BACKEND_PORT=3000
