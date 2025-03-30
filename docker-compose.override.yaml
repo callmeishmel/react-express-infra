@@ -3,6 +3,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    environment:
+      - POSTGRES_URL=postgresql://postgres:postgres@postgres:5432/app_db
     command: npm run dev
     volumes:
       - ./backend:/app
