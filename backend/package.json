@@ -1,6 +1,7 @@
 {
   "name": "backend",
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "amqplib": "^0.10.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -12,7 +13,11 @@
   "scripts": {
     "dev": "nodemon index.js"
   },
+  "prisma": {
+    "schema": "./db/prisma/schema.prisma"
+  },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prisma": "^6.5.0"
   }
 }
