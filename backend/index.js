@@ -2,6 +2,7 @@ const express = require('express');
 const redis = require('redis');
 const amqp = require('amqplib');
 const cors = require('cors');
+const db = require('./db/postgres');
 
 require('dotenv').config();
 
@@ -56,6 +57,17 @@ app.use(cors({
 }));
 
 // Routes
+
+app.get('/pgtest', async (req, res) => {
+    try {
+        const result = await db.query('SELECT NOW()');
+        res.send(`Postgres time: ${result.rows[0].now}`);
+    } catch (err) {
+        console.error('Query error: ', err);
+        res.status(500).send('Postgres query failed');        
+    }
+});
+
 app.get('/', async (req, res) => {
     await client.set('ping', 'pong');
     const value = await client.get('ping');

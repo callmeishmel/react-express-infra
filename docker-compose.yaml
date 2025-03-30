@@ -6,9 +6,11 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - BACKEND_PORT=3000
+      - POSTGRES_URL=${POSTGRES_URL:-postgresql://postgres:postgres@postgres:5432/app_db}
     depends_on:
       - redis
       - rabbitmq
+      - postgres
 
   frontend:
     build: ./frontend
@@ -39,3 +41,25 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://rabbitmq
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-app_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+  
+volumes:
+  postgres-data:
+  mongo-data:
