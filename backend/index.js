@@ -3,8 +3,10 @@ const redis = require('redis');
 const amqp = require('amqplib');
 const cors = require('cors');
 const db = require('./db/postgres');
-
 require('dotenv').config();
+
+require('./db/mongo');
+const Message = require('./models/Message');
 
 const app = express();
 const port = process.env.BACKEND_PORT || 3000;
@@ -58,6 +60,7 @@ app.use(cors({
 
 // Routes
 
+// Postgres test call
 app.get('/pgtest', async (req, res) => {
     try {
         const result = await db.query('SELECT NOW()');
@@ -65,6 +68,19 @@ app.get('/pgtest', async (req, res) => {
     } catch (err) {
         console.error('Query error: ', err);
         res.status(500).send('Postgres query failed');        
+    }
+});
+
+// MongoDB test call
+app.get('/mongo-test', async (req, res) => {
+    try {
+        await Message.create({ msg: 'Hello from Mongoose' });
+
+        const messages = await Message.find().sort({ created: -1 }).limit(5);
+        res.json(messages);
+    } catch (err) {
+        console.error('Mongo error: ', err);
+        res.status(500).send('MongoDB failed');
     }
 });
 
