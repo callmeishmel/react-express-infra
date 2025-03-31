@@ -4,26 +4,46 @@ const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
 });
 
-let client;
+pool.on('error', (err) => {
+    console.error('Unexpected PG client error', err);
+    process.exit(-1);
+});
 
-async function connectWithRetry(retries = 10, delay = 2000) {
+async function waitForPostgres(retries = 10, delay = 2000) {
     for (let i = 0; i < retries; i++) {
         try {
-            client = await pool.connect();
-            console.log('Connected to PostgreSQL (manual client)');
+            await pool.query('SELECT 1');
+            console.log('Postgres is ready');
             return;
         } catch (err) {
-            console.error(`Postgres connection failed (attempt ${i + 1})`, err);
-            await new Promise((res) => setTimeout(res, delay));
-        }
+            console.warn(`Postgres not ready (attempt ${i + 1})`);
+            await new Promise(res => setTimeout(res, delay));
+        }      
     }
-
-    console.log('Could not connect to Postgres after retries.');
+    throw new Error('Postgres not available after retries');
 }
 
-connectWithRetry();
+async function query(...args) {
+    return pool.query(...args);
+}
+
+async function withTransaction(callback) {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const result = await callback(client);
+        await client.query('COMMIT');
+        return result;
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
+    }
+}
 
 module.exports = {
-    query: (...args) => client.query(...args),
-    client,
+    query,
+    withTransaction,
+    waitForPostgres
 };

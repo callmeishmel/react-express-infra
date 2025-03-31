@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://mongo:27017/app-db';
+const MONGO_URL = process.env.MONGO_URL;
 
 async function connectWithRetry(retries = 10, delay = 2000) {
     for (let i = 0; i < retries; i++) {
@@ -20,6 +20,7 @@ async function connectWithRetry(retries = 10, delay = 2000) {
     console.lerror('Could not connect to MongoDB after retries.');
 }
 
-connectWithRetry();
-
-module.exports = mongoose;
+module.exports = {
+    mongoose,
+    connectWithRetry
+};
