@@ -1,19 +1,25 @@
 services:
   backend:
     build: ./backend
+    env_file:
+      - .env
     ports:
       - '${BACKEND_PORT:-3000}:3000'
     environment:
       - REDIS_URL=redis://redis:6379
       - BACKEND_PORT=3000
       - POSTGRES_URL=${POSTGRES_URL}
+      - MONGO_URL=${MONGO_URL}
     depends_on:
       - redis
       - rabbitmq
       - postgres
+      - mongo
 
   frontend:
     build: ./frontend
+    env_file:
+      - .env
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     environment:
@@ -34,9 +40,12 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_URL=amqp://rabbitmq
 
   worker:
     build: ./worker
+    env_file:
+      - .env
     depends_on:
       - rabbitmq
     environment:
